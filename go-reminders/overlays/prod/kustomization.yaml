@@ -8,4 +8,4 @@ patches:
 images:
 - name: docker-registry-repo
   newName: harbor.tpmlab.vmware.com/library/go-reminders
-  newTag: v8
+  newTag: v11
