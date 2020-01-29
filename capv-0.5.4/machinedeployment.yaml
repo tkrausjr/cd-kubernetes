@@ -31,7 +31,7 @@ metadata:
   name: cib-dev1-md-0
   namespace: default
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       cluster.x-k8s.io/cluster-name: cib-dev1
