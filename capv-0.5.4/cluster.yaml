@@ -1,0 +1,54 @@
+apiVersion: cluster.x-k8s.io/v1alpha2
+kind: Cluster
+metadata:
+  name: cib-dev1
+  namespace: default
+spec:
+  clusterNetwork:
+    pods:
+      cidrBlocks:
+      - 100.96.0.0/11
+    serviceDomain: capv.cluster.local
+    services:
+      cidrBlocks:
+      - 100.64.0.0/13
+  infrastructureRef:
+    apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
+    kind: VSphereCluster
+    name: cib-dev1
+    namespace: default
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
+kind: VSphereCluster
+metadata:
+  name: cib-dev1
+  namespace: default
+spec:
+  cloudProviderConfiguration:
+    global:
+      insecure: true
+      secretName: cloud-provider-vsphere-credentials
+      secretNamespace: kube-system
+    network:
+      name: VLAN 1526
+    providerConfig:
+      cloud:
+        controllerImage: gcr.io/cloud-provider-vsphere/cpi/release/manager:v1.0.0
+      storage:
+        attacherImage: quay.io/k8scsi/csi-attacher:v1.1.1
+        controllerImage: gcr.io/cloud-provider-vsphere/csi/release/driver:v1.0.1
+        livenessProbeImage: quay.io/k8scsi/livenessprobe:v1.1.0
+        metadataSyncerImage: gcr.io/cloud-provider-vsphere/csi/release/syncer:v1.0.1
+        nodeDriverImage: gcr.io/cloud-provider-vsphere/csi/release/driver:v1.0.1
+        provisionerImage: quay.io/k8scsi/csi-provisioner:v1.2.1
+        registrarImage: quay.io/k8scsi/csi-node-driver-registrar:v1.1.0
+    virtualCenter:
+      10.173.13.81:
+        datacenters: Datacenter
+    workspace:
+      datacenter: Datacenter
+      datastore: ISCSI-DATASTORE
+      folder: /Datacenter/vm/capv_vms
+      resourcePool: '*/Resources/Physical-CAPV'
+      server: 10.173.13.81
+  server: 10.173.13.81
