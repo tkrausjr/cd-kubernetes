@@ -1,0 +1,73 @@
+apiVersion: bootstrap.cluster.x-k8s.io/v1alpha2
+kind: KubeadmConfigTemplate
+metadata:
+  name: argo-ctoa-md-0
+  namespace: default
+spec:
+  template:
+    spec:
+      joinConfiguration:
+        nodeRegistration:
+          criSocket: /var/run/containerd/containerd.sock
+          kubeletExtraArgs:
+            cloud-provider: external
+          name: '{{ ds.meta_data.hostname }}'
+      preKubeadmCommands:
+      - hostname "{{ ds.meta_data.hostname }}"
+      - echo "::1         ipv6-localhost ipv6-loopback" >/etc/hosts
+      - echo "127.0.0.1   localhost {{ ds.meta_data.hostname }}" >>/etc/hosts
+      - echo "{{ ds.meta_data.hostname }}" >/etc/hostname
+      users:
+      - name: capv
+        sshAuthorizedKeys:
+        - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC3YhEU5fSP1VifsT3B0xYdBCxnMecy1wmvyhnrQYWehQlKV05nKeo7w3XSuljkrZudgnzTy9qDpRq1aIFb82v9eD8b+SYEo1Xy3ssvij4AvVNC1dWUcmfkN+UHSpGPWosnsMwMZehVjLWskp9HHCtEij/K+uUkMa7iMxzHo3Fb07PchUYK+kK09nW2kNGhXqxzGYwtORi3hplSd9ebKXC/1N7YwWyrT5NbuzhAr+uHm7LyZyXK1472s+S4WM24yqllgDXcshEQ1gTJ0UGXGakZJSIWhlB1CUvLH8ZnAtT3uBaHAQTJ+ACWLdvm3XKu+k/Og41V7gV71Wd7vyO7BcuN root@ubu01-jumphost
+        sudo: ALL=(ALL) NOPASSWD:ALL
+---
+apiVersion: cluster.x-k8s.io/v1alpha2
+kind: MachineDeployment
+metadata:
+  labels:
+    cluster.x-k8s.io/cluster-name: argo-ctoa
+  name: argo-ctoa-md-0
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      cluster.x-k8s.io/cluster-name: argo-ctoa
+  template:
+    metadata:
+      labels:
+        cluster.x-k8s.io/cluster-name: argo-ctoa
+    spec:
+      bootstrap:
+        configRef:
+          apiVersion: bootstrap.cluster.x-k8s.io/v1alpha2
+          kind: KubeadmConfigTemplate
+          name: argo-ctoa-md-0
+          namespace: default
+      infrastructureRef:
+        apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
+        kind: VSphereMachineTemplate
+        name: argo-ctoa-md-0
+        namespace: default
+      version: 1.16.2
+---
+apiVersion: infrastructure.cluster.x-k8s.io/v1alpha2
+kind: VSphereMachineTemplate
+metadata:
+  name: argo-ctoa-md-0
+  namespace: default
+spec:
+  template:
+    spec:
+      datacenter: Datacenter
+      diskGiB: 20
+      memoryMiB: 2048
+      network:
+        devices:
+        - dhcp4: true
+          dhcp6: false
+          networkName: VLAN 1526
+      numCPUs: 2
+      template: capv-ubuntu-1804-k8s-1-16.2
