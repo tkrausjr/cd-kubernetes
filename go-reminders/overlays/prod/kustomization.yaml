@@ -1,12 +1,11 @@
 bases:
 - ../../base
-resources:
-- ingress.yaml
-patches:
-- service.yaml
-- deployment.yaml
 images:
 - name: docker-registry-repo
   newName: harbor.tpmlab.vmware.com/library/go-reminders
-  newTag: 3d477d4
-
+  newTag: argowf-tag2999
+patches:
+- service.yaml
+- deployment.yaml
+resources:
+- ingress.yaml
