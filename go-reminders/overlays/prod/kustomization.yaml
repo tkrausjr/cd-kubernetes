@@ -3,7 +3,7 @@ bases:
 images:
 - name: docker-registry-repo
   newName: harbor.tpmlab.vmware.com/library/go-reminders
-  newTag: argowf-tag2999
+  newTag: 013363a
 patches:
 - service.yaml
 - deployment.yaml
