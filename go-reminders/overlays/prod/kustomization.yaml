@@ -3,7 +3,7 @@ bases:
 images:
 - name: docker-registry-repo
   newName: harbor.vballin.com/go-reminders/go-reminders
-  newTag: bf888b5
+  newTag: 1af9b4a
 patches:
 - service.yaml
 - deployment.yaml
