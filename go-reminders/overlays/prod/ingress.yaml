@@ -1,15 +1,15 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
+  labels:
+    app.kubernetes.io/instance: go-reminders
   name: go-reminders
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+  namespace: default
 spec:
   rules:
-  - http:
+  - host: go-reminders.ing.vballin.com
+    http:
       paths:
-      - path: /go-reminders
-        backend:
+      - backend:
           serviceName: go-reminders
           servicePort: 8080
