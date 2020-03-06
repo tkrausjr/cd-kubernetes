@@ -2,13 +2,8 @@ bases:
 - ../../base
 images:
 - name: docker-registry-repo
-<<<<<<< HEAD
   newName: harbor.tpmlab.vmware.com/library/go-reminders
-  newTag: SOMETAG
-=======
-  newName: harbor.vballin.com/go-reminders/go-reminders
-  newTag: 0b861b9
->>>>>>> 43b2e1dad33eb629aab06f86fc59c7685b1b7e0a
+  newTag: 39a107a
 patches:
 - service.yaml
 - deployment.yaml
