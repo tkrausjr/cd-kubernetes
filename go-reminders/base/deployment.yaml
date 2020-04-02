@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: https://spdx.org/licenses/MIT.html
 #
 
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: go-reminders
