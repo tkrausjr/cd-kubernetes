@@ -1,0 +1,216 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  annotations:
+    kapp.k14s.io/create-strategy: fallback-on-update-or-noop
+    kapp.k14s.io/disable-original: ""
+    kapp.k14s.io/disable-wait: ""
+    kapp.k14s.io/identity: v1;tanzu-package-repo-global/data.packaging.carvel.dev/Package/contour.tanzu.vmware.com.1.22.3+vmware.1-tkg.1;data.packaging.carvel.dev/v1alpha1
+    kbld.k14s.io/images: |
+      - origins:
+        - preresolved:
+            url: extensions.aws-usw2.tmc.cloud.vmware.com/packages/standard/repo@sha256:603c4b11837435058e6d63c918e00d711ce9530c978012f1b76b1f746dbfd9aa
+        url: extensions.aws-usw2.tmc.cloud.vmware.com/packages/standard/repo@sha256:603c4b11837435058e6d63c918e00d711ce9530c978012f1b76b1f746dbfd9aa
+    packaging.carvel.dev/package-repository-ref: tanzu-package-repo-global/tanzu-standard
+  creationTimestamp: "2023-03-14T13:56:37Z"
+  generation: 1
+  labels:
+    kapp.k14s.io/app: "1678802193467181396"
+    kapp.k14s.io/association: v1.90a3b15d87d7a68e8eae74462c777e4a
+  name: contour.tanzu.vmware.com.1.22.3+vmware.1-tkg.1
+  namespace: default
+  resourceVersion: "4663808"
+  uid: 841d5424-9f27-48a6-801c-877fc0a37d6b
+spec:
+  capacityRequirementsDescription: Varies significantly based on number of Services,
+    Ingresses/HTTPProxies, etc. A starting point is 128MB RAM and 0.5 CPU for each
+    Contour and Envoy pod, but this can and should be tuned based on observed usage.
+  licenses:
+  - 'VMware’s End User License Agreement (Underlying OSS license: Apache License 2.0)'
+  refName: contour.tanzu.vmware.com
+  releaseNotes: contour 1.22.3 https://github.com/projectcontour/contour/releases/tag/v1.22.3
+  releasedAt: "2022-12-12T00:00:00Z"
+  template:
+    spec:
+      deploy:
+      - kapp:
+          rawOptions:
+          - --wait-timeout=5m
+          - --kube-api-qps=20
+          - --kube-api-burst=30
+      fetch:
+      - imgpkgBundle:
+          image: extensions.aws-usw2.tmc.cloud.vmware.com/packages/standard/repo@sha256:603c4b11837435058e6d63c918e00d711ce9530c978012f1b76b1f746dbfd9aa
+      template:
+      - ytt:
+          ignoreUnknownComments: true
+          paths:
+          - config/
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+  valuesSchema:
+    openAPIv3:
+      additionalProperties: false
+      description: OpenAPIv3 Schema for Contour 1.22.3
+      properties:
+        certificates:
+          additionalProperties: false
+          description: Settings for the TLS certificates for securing communication
+            between Contour and Envoy.
+          properties:
+            duration:
+              default: 8760h
+              description: If using cert-manager, how long the certificates should
+                be valid for. If useCertManager is false, this field is ignored.
+              type: string
+            renewBefore:
+              default: 360h
+              description: If using cert-manager, how long before expiration the certificates
+                should be renewed. If useCertManager is false, this field is ignored.
+              type: string
+          type: object
+        contour:
+          additionalProperties: false
+          description: Settings for the Contour component.
+          properties:
+            configFileContents:
+              default: null
+              description: The YAML contents of the Contour config file. See https://projectcontour.io/docs/v1.22.3/configuration/#configuration-file
+                for more information.
+              nullable: true
+            logLevel:
+              default: info
+              description: The Contour log level. Valid options are 'info' and 'debug'.
+              type: string
+            replicas:
+              default: 2
+              description: How many Contour pod replicas to have.
+              type: integer
+            useProxyProtocol:
+              default: false
+              description: Whether to enable PROXY protocol for all Envoy listeners.
+              type: boolean
+          type: object
+        envoy:
+          additionalProperties: false
+          description: Settings for the Envoy component.
+          properties:
+            hostNetwork:
+              default: false
+              description: Whether to enable host networking for the Envoy pods.
+              type: boolean
+            hostPorts:
+              additionalProperties: false
+              description: Host port settings for the Envoy pods.
+              properties:
+                enable:
+                  default: true
+                  description: Whether to enable host ports. If false, http & https
+                    are ignored.
+                  type: boolean
+                http:
+                  default: 80
+                  description: If enable == true, the host port number to expose Envoy's
+                    HTTP listener on.
+                  type: integer
+                https:
+                  default: 443
+                  description: If enable == true, the host port number to expose Envoy's
+                    HTTPS listener on.
+                  type: integer
+              type: object
+            logLevel:
+              default: info
+              description: The Envoy log level.
+              type: string
+            service:
+              additionalProperties: false
+              description: Envoy service settings.
+              properties:
+                annotations:
+                  default: null
+                  description: Annotations to set on the Envoy service.
+                  nullable: true
+                aws:
+                  additionalProperties: false
+                  description: AWS loadbalancer service settings.
+                  properties:
+                    LBType:
+                      default: classic
+                      description: AWS loadbalancer type.
+                      type: string
+                  type: object
+                externalTrafficPolicy:
+                  default: ""
+                  description: The external traffic policy for the Envoy service.
+                    If type is 'ClusterIP', this field is ignored. Otherwise, defaults
+                    to 'Cluster' for vsphere and 'Local' for others.
+                  type: string
+                loadBalancerIP:
+                  default: ""
+                  description: The desired load balancer IP. If type is not 'LoadBalancer',
+                    this field is ignored. It is up to the cloud provider whether
+                    to honor this request. If not specified, then load balancer IP
+                    will be assigned by the cloud provider.
+                  type: string
+                nodePorts:
+                  additionalProperties: false
+                  description: NodePort settings for the Envoy service. If type is
+                    not 'NodePort' or 'LoadBalancer', these settings are ignored.
+                  properties:
+                    http:
+                      default: 0
+                      description: The node port number to expose Envoy's HTTP listener
+                        on. If not specified, a node port will be auto-assigned by
+                        Kubernetes.
+                      type: integer
+                    https:
+                      default: 0
+                      description: The node port number to expose Envoy's HTTPS listener
+                        on. If not specified, a node port will be auto-assigned by
+                        Kubernetes.
+                      type: integer
+                  type: object
+                type:
+                  default: ""
+                  description: The type of Kubernetes service to provision for Envoy.
+                    If not specified, will default to 'NodePort' for docker and vsphere
+                    and 'LoadBalancer' for others.
+                  type: string
+              type: object
+            terminationGracePeriodSeconds:
+              default: 300
+              description: The termination grace period, in seconds, for the Envoy
+                pods.
+              type: integer
+            workload:
+              additionalProperties: false
+              description: Envoy workload settings.
+              properties:
+                replicas:
+                  default: 2
+                  description: The number of Envoy replicas to deploy when 'type'
+                    is set to 'Deployment'. If not specified, it will default to '2'.
+                  type: integer
+                type:
+                  default: DaemonSet
+                  description: The type of Kubernetes workload Envoy is deployed as.
+                    Options are 'Deployment' or 'DaemonSet'. If not specified, will
+                    default to 'DaemonSet'.
+                  type: string
+              type: object
+          type: object
+        infrastructure_provider:
+          default: vsphere
+          description: The underlying infrastructure provider. Valid values are `vsphere`,
+            `aws` and `azure`.
+          type: string
+        namespace:
+          default: tanzu-system-ingress
+          description: The namespace in which to deploy Contour and Envoy.
+          type: string
+      title: contour.tanzu.vmware.com.1.22.3+vmware.1-tkg.1 values schema
+      type: object
+  version: 1.22.3+vmware.1-tkg.1
