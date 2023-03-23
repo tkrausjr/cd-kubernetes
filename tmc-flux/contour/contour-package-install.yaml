@@ -10,7 +10,7 @@ metadata:
     kapp.k14s.io/update-strategy: "fallback-on-replace"
     kapp.k14s.io/create-strategy: "fallback-on-replace"
   name: contour
-  namespace: packages
+  namespace: tanzu-fluxcd-packageinstalls
 spec:
   serviceAccountName: contour-packages-sa
   packageRef:
