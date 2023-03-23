@@ -8,6 +8,7 @@ secretGenerator:
 - name: contour-packages-values
   namespace: tanzu-continuousdelivery-resources
   files:
+  - namespace.yaml
   - contour.yaml
   type: Opaque
   options:
