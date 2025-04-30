@@ -11,5 +11,5 @@ spec:
     name: boot
   selector:
     app: fortune-app
-  type: ClusterIP
+  type: LoadBalancer
 
