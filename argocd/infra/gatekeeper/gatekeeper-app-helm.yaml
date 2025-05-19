@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+# Multi Source argocd Application
+# Source 1 is the gatekeeper HELM chart from the official repo
+# Source 2 is the values.yaml file from this(my) repo
+spec:
+  sources:
+  - repoURL: 'https://open-policy-agent.github.io/gatekeeper/charts'
+    chart: gatekeeper
+    targetRevision: 3.19
+    helm:
+      valueFiles:
+      - $values/argocd/infra/gatekeeper/values.yaml
+      # $values is a variable/placeholder followed by
+      # the relative path to the values.yaml file   
+  - repoURL: 'https://github.com/tkrausjr/cd-kubernetes.git'
+    targetRevision: master
+    ref: values
