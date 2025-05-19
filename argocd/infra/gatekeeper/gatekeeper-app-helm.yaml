@@ -7,7 +7,7 @@ spec:
   sources:
   - repoURL: 'https://open-policy-agent.github.io/gatekeeper/charts'
     chart: gatekeeper
-    targetRevision: 3.19
+    targetRevision: 3.19.1
     helm:
       valueFiles:
       - $values/argocd/infra/gatekeeper/values.yaml
